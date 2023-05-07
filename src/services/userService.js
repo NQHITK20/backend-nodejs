@@ -8,33 +8,43 @@ let handleUserLogin = (email, password) => {
             let userData = {};
 
             let isExist = await checkUserEmail(email);
+            console.log('check email:', isExist);
             if (isExist) {
                 //exist that email
                 //compare password
                 let user = await db.User.findOne({
-                    where: { email: email }
+                    where: { email: email },
+                    raw: true
                 });
+                console.log('check user:', user);
                 if (user) {
-
-                    let check = await bcrypt.compareSync(password, user.password);
+                    let check = bcrypt.compareSync(password, user.password);
+                    console.log('check password:', check);
                     if (check) {
                         userData.errCode = 0;
-                        userData.errMessage = 'Check ngon r',
-                            userData.user = user;
-                    }
-                    else {
+                        userData.errMessage = 'Check ngon r';
+
+                        delete user.password;
+                        userData.user = user;
+                        console.log('check userData', userData);
+                        resolve(userData)
+                    } else {
                         userData.errCode = 3;
                         userData.errMessage = 'sai password';
+                        console.log('check userData', userData);
+                        resolve(userData)
                     }
-                }
-                else {
+                } else {
                     userData.errCode = 2;
                     userData.errMessage = `User doesn't exist`;
+                    console.log('check userData', userData);
+                    resolve(userData)
                 }
             } else {
                 //return err
-                userData.errCode = 1;
+                userData.errCodeEmail = 1;
                 userData.errMessage = `your email doesn't exist in out system.pls try again`
+                console.log('check userData', userData);
                 resolve(userData)
             }
         } catch (e) {
