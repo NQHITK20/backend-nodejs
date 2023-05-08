@@ -42,7 +42,7 @@ let handleUserLogin = (email, password) => {
                 }
             } else {
                 //return err
-                userData.errCodeEmail = 1;
+                userData.errCode = 1;
                 userData.errMessage = `your email doesn't exist in out system.pls try again`
                 console.log('check userData', userData);
                 resolve(userData)

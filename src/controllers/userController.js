@@ -14,7 +14,6 @@ let handleLogin = async (req, res) => {
         })
     }
     let userData = await userService.handleUserLogin(email, password);
-    console.log('userdata :', userData);
     //check email
     //compare password
     //return userinfo
@@ -22,7 +21,7 @@ let handleLogin = async (req, res) => {
     return res.status(200).json({
         errCode: userData.errCode,
         message: userData.errMessage,
-        user: userData.user ? userData.user : { 'a': 'aaa' },
+        user: userData.user ? userData.user : {},
     })
 }
 module.exports = {

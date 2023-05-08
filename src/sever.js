@@ -4,10 +4,12 @@ import ViewEngine from "./config/viewEngine";
 import initWebRoute from "./route/web";
 import connect from "./config/connectDB";
 import connectDB from "./config/connectDB";
+import cors from "../node_modules/cors/lib/index"
 
 require('dotenv').config();
 
 let app = express();
+app.use(cors({ credentials: true, origin: true }));
 
 
 app.use(bodyParser.json());
@@ -22,4 +24,5 @@ app.listen(port, () => {
     // callback
     console.log("Backend nodejs is running on port", +port);
 })
+
 
