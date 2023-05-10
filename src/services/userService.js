@@ -109,25 +109,26 @@ let createNewUser = (data) => {
             if (check === true) {
                 resolve({
                     errCode: 1,
-                    message: 'Your email is already in used,plese try another one '
+                    errMessage: 'Your email is already in used.FUCK U,plese try another one '
+                });
+            } else {
+                let hashPasswordFromBcrypt = await hashUserPassword(data.password);
+                await db.User.create({
+                    email: data.email,
+                    password: hashPasswordFromBcrypt,
+                    firstName: data.firstName,
+                    lastName: data.lastName,
+                    address: data.address,
+                    phonenumber: data.phoneNumber,
+                    gender: data.gender === '1' ? true : false,
+                    image: data.image,
+                    roleId: data.roleId
+                })
+                resolve({
+                    errCode: 0,
+                    errMessage: 'Ok'
                 });
             }
-            let hashPasswordFromBcrypt = await hashUserPassword(data.password);
-            await db.User.create({
-                email: data.email,
-                password: hashPasswordFromBcrypt,
-                firstName: data.firstName,
-                lastName: data.lastName,
-                address: data.address,
-                phonenumber: data.phoneNumber,
-                gender: data.gender === '1' ? true : false,
-                image: data.image,
-                roleId: data.roleId
-            })
-            resolve({
-                errCode: 0,
-                message: 'Ok'
-            });
         } catch (e) {
             reject(e);
         }
@@ -150,7 +151,7 @@ let deleteUser = (userId) => {
             });
             resolve({
                 errCode: 0,
-                message: `Delete ngon r `
+                errMessage: `Delete ngon r `
             })
         } catch (error) {
             reject(error)
