@@ -194,6 +194,30 @@ let updateUserData = (data) => {
         }
     })
 }
+let getAllCodeService = (typeIp) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            let res = {};
+            if (!typeIp) {
+                res.errCode = 1,
+                    res.errMessage = 'missing input parament'
+            } else {
+                let allCode = await db.allcodes.findAll({
+                    where: {
+                        type: typeIp
+                    }
+                });
+                res.errCode = 0;
+                res.errMessage = 'lấy ra ngon r'
+                res.data = allCode
+                console.log('test  ', res)
+            }
+            resolve(res)
+        } catch (error) {
+
+        }
+    })
+}
 module.exports = {
     handleUserLogin: handleUserLogin,
     checkUserEmail: checkUserEmail,
@@ -201,4 +225,5 @@ module.exports = {
     createNewUser: createNewUser,
     deleteUser: deleteUser,
     updateUserData: updateUserData,
+    getAllCodeService: getAllCodeService
 }
