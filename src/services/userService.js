@@ -210,11 +210,10 @@ let getAllCodeService = (typeIp) => {
                 res.errCode = 0;
                 res.errMessage = 'lấy ra ngon r'
                 res.data = allCode
-                console.log('test  ', res)
             }
             resolve(res)
         } catch (error) {
-
+            console.log(error)
         }
     })
 }
