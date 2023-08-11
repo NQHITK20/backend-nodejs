@@ -123,7 +123,8 @@ let createNewUser = (data) => {
                     gender: data.gender,
                     image: data.image,
                     roleId: data.roleId,
-                    positionId: data.positionId
+                    positionId: data.positionId,
+                    image: data.avatar
                 })
                 resolve({
                     errCode: 0,
@@ -163,36 +164,40 @@ let deleteUser = (userId) => {
 let updateUserData = (data) => {
     return new Promise(async (resolve, reject) => {
         try {
-            if (!data.id || !data.roleId || !data.positionId || !data.gender) {
+            if (!data.id || !data.roleId || !data.gender) {
                 resolve({
                     errCode: 2,
                     errMessage: 'missing input parameter'
                 })
             }
-            let user = await db.User.findOne({
-                where: { id: data.id },
-                raw: false
-            })
-            if (user) {
-                user.firstName = data.firstName
-                user.lastName = data.lastName
-                user.address = data.address
-                user.roleId = data.roleId
-                user.positionId = data.positionId
-                user.gender = data.gender
-                user.phonenumber = data.phonenumber
-
-                await user.save();
-                resolve({
-                    errCode: 0,
-                    errMessage: ' Lưu ok r'
-                });
-            }
             else {
-                resolve({
-                    errCode: 1,
-                    errMessage: ' Méo thấy người dùng',
-                });
+                let user = await db.User.findOne({
+                    where: { id: data.id },
+                    raw: false
+                })
+                if (user) {
+                    user.firstName = data.firstName
+                    user.lastName = data.lastName
+                    user.address = data.address
+                    user.roleId = data.roleId
+                    user.positionId = data.positionId
+                    user.gender = data.gender
+                    user.phonenumber = data.phonenumber
+                    if (data.avatar) {
+                        user.image = data.avatar
+                    }
+                    await user.save();
+                    resolve({
+                        errCode: 0,
+                        errMessage: ' Lưu ok r'
+                    });
+                }
+                else {
+                    resolve({
+                        errCode: 1,
+                        errMessage: ' Méo thấy người dùng',
+                    });
+                }
             }
         } catch (error) {
             reject(error)
