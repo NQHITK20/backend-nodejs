@@ -15,22 +15,28 @@ module.exports = {
             // specialtyId: DataTypes.INTEGER,
             // clinicId: DataTypes.INTEGER
             contentHTML: {
-                type: Sequelize.TEXT('long')
+                type: Sequelize.TEXT('long'),
+                allowNull: false
             },
             contentMarkdown: {
-                type: Sequelize.TEXT('long')
+                type: Sequelize.TEXT('long'),
+                allowNull: false
             },
             description: {
-                type: Sequelize.TEXT('long')
+                type: Sequelize.TEXT('long'),
+                allowNull: true
             },
             doctorId: {
-                type: Sequelize.INTEGER
+                type: Sequelize.INTEGER,
+                allowNull: true
             },
             specialtyId: {
-                type: Sequelize.INTEGER
+                type: Sequelize.INTEGER,
+                allowNull: true
             },
             clinicId: {
-                type: Sequelize.INTEGER
+                type: Sequelize.INTEGER,
+                allowNull: true
             },
             createdAt: {
                 allowNull: false,

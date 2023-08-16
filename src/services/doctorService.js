@@ -43,8 +43,33 @@ let getAllDoctor = () => {
         }
     })
 }
-
+let saveDetailDoctor = (inputData) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            if (!inputData.doctorId || !inputData.description || !inputData.contentMarkdown) {
+                resolve({
+                    errCode: 1,
+                    errMessage: "missing parameter"
+                })
+            } else {
+                await db.markdown.create({
+                    contentHTML: inputData.contentHTML,
+                    contentMarkdown: inputData.contentMarkdown,
+                    description: inputData.description,
+                    doctorId: inputData.doctorId,
+                })
+                resolve({
+                    errCode: 0,
+                    errMessage: "Lấy Dr ngon r"
+                })
+            }
+        } catch (error) {
+            reject(error)
+        }
+    })
+}
 module.exports = {
     getTopDoctorHome: getTopDoctorHome,
-    getAllDoctor: getAllDoctor
+    getAllDoctor: getAllDoctor,
+    saveDetailDoctor: saveDetailDoctor
 }
