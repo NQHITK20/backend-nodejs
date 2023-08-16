@@ -68,8 +68,43 @@ let saveDetailDoctor = (inputData) => {
         }
     })
 }
+let getDetailDoctor = (inputId) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            if (!inputId) {
+                resolve({
+                    errCode: 1,
+                    errMessage: "missing id doctor"
+                })
+            } else {
+                let data = await db.User.findOne({
+                    where: { id: inputId },
+                    attributes: {
+                        exclude: ['password', 'image']
+                    },
+                    include: [
+                        {
+                            model: db.markdown, attributes: ['description', 'contentHTML', 'contentMarkdown']
+                        },
+                        { model: db.allcodes, as: 'positionData', attributes: ['valueEn', 'valueVi'] }
+
+                    ],
+                    raw: true,
+                    nest: true
+                })
+                resolve({
+                    errCode: 0,
+                    data: data
+                })
+            }
+        } catch (error) {
+            reject(error)
+        }
+    })
+}
 module.exports = {
     getTopDoctorHome: getTopDoctorHome,
     getAllDoctor: getAllDoctor,
-    saveDetailDoctor: saveDetailDoctor
+    saveDetailDoctor: saveDetailDoctor,
+    getDetailDoctor: getDetailDoctor
 }

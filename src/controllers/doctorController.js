@@ -40,8 +40,21 @@ let postInfoDoctor = async (req, res) => {
         })
     }
 }
+let getDetailDoctor = async (req, res) => {
+    try {
+        let doctor = await doctorService.getDetailDoctor(req.query.id)
+        return res.status(200).json(doctor)
+    } catch (error) {
+        console.log(error)
+        return res.status(200).json({
+            errCode: -1,
+            errMessage: 'Error from sever...'
+        })
+    }
+}
 module.exports = {
     getTopDoctorHome: getTopDoctorHome,
     getAllDoctor: getAllDoctor,
-    postInfoDoctor: postInfoDoctor
+    postInfoDoctor: postInfoDoctor,
+    getDetailDoctor: getDetailDoctor
 }
