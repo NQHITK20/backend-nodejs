@@ -19,7 +19,6 @@ let handleUserLogin = (email, password) => {
             let userData = {};
 
             let isExist = await checkUserEmail(email);
-            console.log('check email:', isExist);
             if (isExist) {
                 //exist that email
                 //compare password
@@ -27,7 +26,6 @@ let handleUserLogin = (email, password) => {
                     where: { email: email },
                     raw: true
                 });
-                console.log('check user:', user);
                 if (user) {
                     let check = bcrypt.compareSync(password, user.password);
                     console.log('check password:', check);

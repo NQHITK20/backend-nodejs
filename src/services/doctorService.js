@@ -1,3 +1,4 @@
+import { raw } from "body-parser"
 import db from "../models/index"
 let getTopDoctorHome = (limitInput) => {
     return new Promise(async (resolve, reject) => {
@@ -46,18 +47,33 @@ let getAllDoctor = () => {
 let saveDetailDoctor = (inputData) => {
     return new Promise(async (resolve, reject) => {
         try {
-            if (!inputData.doctorId || !inputData.description || !inputData.contentMarkdown) {
+            if (!inputData.doctorId || !inputData.description || !inputData.contentMarkdown || !inputData.action) {
                 resolve({
                     errCode: 1,
                     errMessage: "missing parameter"
                 })
             } else {
-                await db.markdown.create({
-                    contentHTML: inputData.contentHTML,
-                    contentMarkdown: inputData.contentMarkdown,
-                    description: inputData.description,
-                    doctorId: inputData.doctorId,
-                })
+                if (inputData.action === 'CREATE') {
+                    await db.markdown.create({
+                        contentHTML: inputData.contentHTML,
+                        contentMarkdown: inputData.contentMarkdown,
+                        description: inputData.description,
+                        doctorId: inputData.doctorId,
+                    })
+                }
+                if (inputData.action === 'EDIT') {
+                    let doctorMarkdown = await db.markdown.findOne({
+                        where: { doctorId: inputData.doctorId },
+                        raw: false
+                    })
+                    if (doctorMarkdown) {
+                        doctorMarkdown.contentHTML = inputData.contentHTML
+                        doctorMarkdown.contentMarkdown = inputData.contentMarkdown
+                        doctorMarkdown.description = inputData.description
+                        await doctorMarkdown.save()
+                    }
+                }
+
                 resolve({
                     errCode: 0,
                     errMessage: "Lấy Dr ngon r"
@@ -80,7 +96,7 @@ let getDetailDoctor = (inputId) => {
                 let data = await db.User.findOne({
                     where: { id: inputId },
                     attributes: {
-                        exclude: ['password', 'image']
+                        exclude: ['password']
                     },
                     include: [
                         {
@@ -92,6 +108,10 @@ let getDetailDoctor = (inputId) => {
                     raw: true,
                     nest: true
                 })
+                if (data && data.image) {
+                    data.image = new Buffer(data.image, 'base64').toString()
+                }
+                if (!data) data = {}
                 resolve({
                     errCode: 0,
                     data: data
