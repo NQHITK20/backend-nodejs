@@ -1,5 +1,7 @@
 import { raw } from "body-parser"
 import db from "../models/index"
+require('dotenv').config();
+const MAX_NUMBER_SCHEDULE = process.env.MAX_NUMBER_SCHEDULE
 let getTopDoctorHome = (limitInput) => {
     return new Promise(async (resolve, reject) => {
         try {
@@ -122,9 +124,35 @@ let getDetailDoctor = (inputId) => {
         }
     })
 }
+let bulkCreateSchedule = (data) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            if (!data.arr) {
+                resolve({
+                    errCode: -2,
+                    errMessage: "missing shit"
+                })
+            }
+            else {
+                let schedule = data.arr
+                if (schedule) {
+                    schedule = schedule.map(item => {
+                        item.maxNumber = MAX_NUMBER_SCHEDULE
+                        return item
+                    })
+                }
+                console.log('check dataaaaa', schedule)
+                resolve('')
+            }
+        } catch (error) {
+            reject(error)
+        }
+    })
+}
 module.exports = {
     getTopDoctorHome: getTopDoctorHome,
     getAllDoctor: getAllDoctor,
     saveDetailDoctor: saveDetailDoctor,
-    getDetailDoctor: getDetailDoctor
+    getDetailDoctor: getDetailDoctor,
+    bulkCreateSchedule: bulkCreateSchedule
 }
