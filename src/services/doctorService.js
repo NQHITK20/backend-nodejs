@@ -1,5 +1,8 @@
 import { raw } from "body-parser"
 import db from "../models/index"
+import _ from "lodash"
+
+
 require('dotenv').config();
 const MAX_NUMBER_SCHEDULE = process.env.MAX_NUMBER_SCHEDULE
 let getTopDoctorHome = (limitInput) => {
@@ -127,7 +130,7 @@ let getDetailDoctor = (inputId) => {
 let bulkCreateSchedule = (data) => {
     return new Promise(async (resolve, reject) => {
         try {
-            if (!data.arr) {
+            if (!data.arr || !data.doctorId || !data.Formatdate) {
                 resolve({
                     errCode: -2,
                     errMessage: "missing shit"
@@ -141,8 +144,28 @@ let bulkCreateSchedule = (data) => {
                         return item
                     })
                 }
-                console.log('check dataaaaa', schedule)
-                resolve('')
+                let existing = await db.schedule.findAll({
+                    where: { doctorId: data.doctorId, date: data.Formatdate },
+                    attributes: ['timeType', 'date', 'doctorId', 'maxNumber'],
+                    raw: true
+                })
+                if (existing && existing.length > 0) {
+                    existing = existing.map(item => {
+                        item.date = new Date(item.date).getTime()
+                        return item
+                    })
+                }
+                let toCreate = _.differenceWith(schedule, existing, (a, b) => {
+                    return a.timeType === b.timeType && a.date === b.date
+                })
+                if (toCreate && toCreate.length > 0) {
+                    await db.schedule.bulkCreate(toCreate)
+                }
+                console.log('check diff1', toCreate)
+                resolve({
+                    errCode: 0,
+                    errMessage: "ngon zồi"
+                })
             }
         } catch (error) {
             reject(error)
