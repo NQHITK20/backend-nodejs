@@ -172,10 +172,37 @@ let bulkCreateSchedule = (data) => {
         }
     })
 }
+let getScheduleDoctor = (doctorId, date) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            if (!doctorId || !date) {
+                resolve({
+                    errCode: 1,
+                    errMessage: 'missing shit'
+                })
+            } else {
+                let data = await db.schedule.findAll({
+                    where: {
+                        doctorId: doctorId,
+                        date: date
+                    },
+                })
+                if (!data) data = []
+                resolve({
+                    errCode: 0,
+                    data: data
+                })
+            }
+        } catch (error) {
+            reject(error)
+        }
+    })
+}
 module.exports = {
     getTopDoctorHome: getTopDoctorHome,
     getAllDoctor: getAllDoctor,
     saveDetailDoctor: saveDetailDoctor,
     getDetailDoctor: getDetailDoctor,
-    bulkCreateSchedule: bulkCreateSchedule
+    bulkCreateSchedule: bulkCreateSchedule,
+    getScheduleDoctor: getScheduleDoctor
 }
