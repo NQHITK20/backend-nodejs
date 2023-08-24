@@ -186,6 +186,13 @@ let getScheduleDoctor = (doctorId, date) => {
                         doctorId: doctorId,
                         date: date
                     },
+                    include: [
+
+                        { model: db.allcodes, as: 'timeTypeData', attributes: ['valueEn', 'valueVi'] }
+
+                    ],
+                    raw: true,
+                    nest: true
                 })
                 if (!data) data = []
                 resolve({
