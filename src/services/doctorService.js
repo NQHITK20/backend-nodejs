@@ -161,7 +161,6 @@ let bulkCreateSchedule = (data) => {
                 if (toCreate && toCreate.length > 0) {
                     await db.schedule.bulkCreate(toCreate)
                 }
-                console.log('check diff1', toCreate)
                 resolve({
                     errCode: 0,
                     errMessage: "ngon zồi"
