@@ -52,12 +52,15 @@ let getAllDoctor = () => {
 let saveDetailDoctor = (inputData) => {
     return new Promise(async (resolve, reject) => {
         try {
-            if (!inputData.doctorId || !inputData.description || !inputData.contentMarkdown || !inputData.action) {
+            if (!inputData.doctorId || !inputData.description || !inputData.contentMarkdown || !inputData.action
+                || !inputData.selectPrice || !inputData.selectPayment || !inputData.selectProvince || !inputData.nameClinic || !inputData.addressClinic || !inputData.note) {
                 resolve({
                     errCode: 1,
                     errMessage: "missing parameter"
                 })
             } else {
+
+                //markdown tb
                 if (inputData.action === 'CREATE') {
                     await db.markdown.create({
                         contentHTML: inputData.contentHTML,
@@ -79,6 +82,36 @@ let saveDetailDoctor = (inputData) => {
                     }
                 }
 
+                //doctor info tb
+                let doctorInfo = await db.doctor_info.findOne({
+                    where: {
+                        doctorId: inputData.doctorId
+                    },
+                    raw: false
+
+                })
+                if (doctorInfo) {
+                    //update
+                    doctorInfo.doctorId = inputData.doctorId
+                    doctorInfo.priceId = inputData.selectPrice
+                    doctorInfo.provinceId = inputData.selectProvince
+                    doctorInfo.paymentId = inputData.selectPayment
+                    doctorInfo.nameClinic = inputData.nameClinic
+                    doctorInfo.addressClinic = inputData.addressClinic
+                    doctorInfo.note = inputData.note
+                    await doctorInfo.save()
+                } else {
+                    //create
+                    await db.doctor_info.create({
+                        doctorId: inputData.doctorId,
+                        priceId: inputData.selectPrice,
+                        provinceId: inputData.selectProvince,
+                        paymentId: inputData.selectPayment,
+                        nameClinic: inputData.nameClinic,
+                        addressClinic: inputData.addressClinic,
+                        note: inputData.note
+                    })
+                }
                 resolve({
                     errCode: 0,
                     errMessage: "Lấy Dr ngon r"
