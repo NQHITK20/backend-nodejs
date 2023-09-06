@@ -281,6 +281,55 @@ let getExtraInfoById = (doctorId) => {
         }
     })
 }
+let getProfileById = (doctorId) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            if (!doctorId) {
+                resolve({
+                    errCode: -1,
+                    errMessage: "missing shit"
+                })
+            }
+            else {
+                let data = await db.User.findOne({
+                    where: { id: doctorId },
+                    attributes: {
+                        exclude: ['password']
+                    },
+                    include: [
+                        {
+                            model: db.markdown, attributes: ['description', 'contentHTML', 'contentMarkdown']
+                        },
+                        {
+                            model: db.doctor_info,
+                            attributes: {
+                                exclude: ['id', 'doctorId']
+                            },
+                            include: [
+                                { model: db.allcodes, as: 'priceData', attributes: ['valueEn', 'valueVi'] },
+                                { model: db.allcodes, as: 'provinceData', attributes: ['valueEn', 'valueVi'] },
+                                { model: db.allcodes, as: 'paymentData', attributes: ['valueEn', 'valueVi'] }
+                            ]
+                        },
+                        { model: db.allcodes, as: 'positionData', attributes: ['valueEn', 'valueVi'] }
+                    ],
+                    raw: true,
+                    nest: true
+                })
+                if (data && data.image) {
+                    data.image = new Buffer(data.image, 'base64').toString()
+                }
+                if (!data) data = {}
+                resolve({
+                    errCode: 0,
+                    data: data
+                })
+            }
+        } catch (error) {
+            reject(error)
+        }
+    })
+}
 module.exports = {
     getTopDoctorHome: getTopDoctorHome,
     getAllDoctor: getAllDoctor,
@@ -288,5 +337,6 @@ module.exports = {
     getDetailDoctor: getDetailDoctor,
     bulkCreateSchedule: bulkCreateSchedule,
     getScheduleDoctor: getScheduleDoctor,
-    getExtraInfoById: getExtraInfoById
+    getExtraInfoById: getExtraInfoById,
+    getProfileById: getProfileById
 }
