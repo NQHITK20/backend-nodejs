@@ -35,23 +35,19 @@ let handleUserLogin = (email, password) => {
 
                         delete user.password;
                         userData.user = user;
-                        console.log('check userData', userData);
                     } else {
                         userData.errCode = 3;
                         userData.errMessage = 'sai password';
-                        console.log('check userData', userData);
                     }
                 } else {
                     userData.errCode = 2;
                     userData.errMessage = `User doesn't exist`;
-                    console.log('check userData', userData);
                 }
                 resolve(userData)
             } else {
                 //return err
                 userData.errCode = 1;
                 userData.errMessage = `your email doesn't exist in out system.pls try again`
-                console.log('check userData', userData);
                 resolve(userData)
             }
         } catch (e) {
