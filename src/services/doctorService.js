@@ -229,8 +229,8 @@ let getScheduleDoctor = (doctorId, date) => {
                         date: date
                     },
                     include: [
-
-                        { model: db.allcodes, as: 'timeTypeData', attributes: ['valueEn', 'valueVi'] }
+                        { model: db.allcodes, as: 'timeTypeData', attributes: ['valueEn', 'valueVi'] },
+                        { model: db.User, as: 'doctorData', attributes: ['firstName', 'lastName'] }
 
                     ],
                     raw: true,

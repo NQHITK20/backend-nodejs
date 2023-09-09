@@ -1,18 +1,30 @@
 import { raw } from "body-parser"
 import db from "../models/index"
 require('dotenv').config()
+import emailService from './emailService'
+
 
 let postAppointment = (data) => {
 
     return new Promise(async (resolve, reject) => {
         try {
-            if (!data.email || !data.doctorId || !data.timeType || !data.date) {
+            if (!data.email || !data.doctorId || !data.timeType || !data.date
+                || !data.fullName
+            ) {
                 resolve({
                     errCode: -1,
                     errMessage: "missing lot of shit"
                 })
 
             } else {
+                await emailService.sendAEmail({
+                    receiverEmail: data.email,
+                    patientName: data.fullName,
+                    time: data.timeString,
+                    doctorName: data.doctorName,
+                    language: data.language,
+                    link: 'https://www.facebook.com/',
+                })
                 //upsert patient
                 let user = await db.User.findOrCreate({
                     where: { email: data.email },
@@ -32,8 +44,6 @@ let postAppointment = (data) => {
                             date: data.date,
                             timeType: data.timeType
                         },
-
-
                     })
                 }
                 resolve({

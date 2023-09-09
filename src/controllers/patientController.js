@@ -1,6 +1,5 @@
 import patientService from "../services/patientService"
 
-
 let postAppointment = async (req, res) => {
     try {
         let patient = await patientService.postAppointment(req.body)
