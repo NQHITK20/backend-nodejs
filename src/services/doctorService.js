@@ -5,6 +5,7 @@ import _ from "lodash"
 
 require('dotenv').config();
 const MAX_NUMBER_SCHEDULE = process.env.MAX_NUMBER_SCHEDULE
+
 let getTopDoctorHome = (limitInput) => {
     return new Promise(async (resolve, reject) => {
         try {
@@ -49,14 +50,31 @@ let getAllDoctor = () => {
         }
     })
 }
+let checkRequiredField = (inputData) => {
+    let arr = ['doctorId', 'description', 'contentMarkdown', 'action', 'selectPrice', 'selectPayment', 'selectProvince', 'nameClinic', 'addressClinic', 'note', 'specialtyId']
+    let isValid = true
+    let element = ''
+    for (let i = 0; i < arr.length; i++) {
+        if (!inputData[arr[i]]) {
+            isValid = false
+            element = arr[i]
+            break
+        }
+    }
+    return {
+        isValid: isValid,
+        element: element
+    }
+}
+
 let saveDetailDoctor = (inputData) => {
     return new Promise(async (resolve, reject) => {
         try {
-            if (!inputData.doctorId || !inputData.description || !inputData.contentMarkdown || !inputData.action
-                || !inputData.selectPrice || !inputData.selectPayment || !inputData.selectProvince || !inputData.nameClinic || !inputData.addressClinic || !inputData.note) {
+            let checkObj = checkRequiredField(inputData)
+            if (checkObj.isValid === false) {
                 resolve({
                     errCode: 1,
-                    errMessage: "missing parameter"
+                    errMessage: `missing parameter :${checkObj.element}`
                 })
             } else {
 
@@ -99,6 +117,8 @@ let saveDetailDoctor = (inputData) => {
                     doctorInfo.nameClinic = inputData.nameClinic
                     doctorInfo.addressClinic = inputData.addressClinic
                     doctorInfo.note = inputData.note
+                    doctorInfo.specialtyId = inputData.specialtyId
+                    doctorInfo.clinicId = inputData.clinicId
                     await doctorInfo.save()
                 } else {
                     //create
@@ -109,7 +129,9 @@ let saveDetailDoctor = (inputData) => {
                         paymentId: inputData.selectPayment,
                         nameClinic: inputData.nameClinic,
                         addressClinic: inputData.addressClinic,
-                        note: inputData.note
+                        note: inputData.note,
+                        specialtyId: inputData.specialtyId,
+                        clinicId: inputData.clinicId
                     })
                 }
                 resolve({
@@ -338,5 +360,6 @@ module.exports = {
     bulkCreateSchedule: bulkCreateSchedule,
     getScheduleDoctor: getScheduleDoctor,
     getExtraInfoById: getExtraInfoById,
-    getProfileById: getProfileById
+    getProfileById: getProfileById,
+    checkRequiredField: checkRequiredField
 }
