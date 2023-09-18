@@ -11,7 +11,8 @@ let buildUrlEmail = (doctorId, token) => {
 let postAppointment = (data) => {
     return new Promise(async (resolve, reject) => {
         try {
-            if (!data.email || !data.doctorId || !data.timeType || !data.date || !data.fullName) {
+            if (!data.email || !data.doctorId || !data.timeType || !data.date || !data.fullName
+                || !data.selectedGender || !data.address) {
                 resolve({
                     errCode: -1,
                     errMessage: "missing lot of shit"
@@ -31,7 +32,10 @@ let postAppointment = (data) => {
                     where: { email: data.email },
                     defaults: {
                         email: data.email,
-                        roleId: 'R3'
+                        roleId: 'R3',
+                        gender: data.selectedGender,
+                        address: data.address,
+                        firstName: data.fullName,
                     }
                 })
                 //create a booking record
