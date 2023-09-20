@@ -1,7 +1,7 @@
 import { raw } from "body-parser"
 import db from "../models/index"
 import _ from "lodash"
-
+import emailService from '../services/emailService'
 
 require('dotenv').config();
 const MAX_NUMBER_SCHEDULE = process.env.MAX_NUMBER_SCHEDULE
@@ -393,6 +393,42 @@ let getListPatient = (doctorId, date) => {
         }
     })
 }
+let sendRemedy = (data) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            if (!data.email || !data.doctorId || !data.patientId || !data.timeType) {
+                resolve({
+                    errCode: - 1,
+                    errMessage: "missing shit"
+                })
+            }
+            else {
+                //update patient status
+                let appointment = await db.bookings.findOne({
+                    where: {
+                        doctorId: data.doctorId,
+                        patientId: data.patientId,
+                        timeType: data.timeType,
+                        statusId: 'S2',
+                    },
+                    raw: false
+                })
+                if (appointment) {
+                    appointment.statusId = 'S3';
+                    await appointment.save()
+                }
+                await emailService.sendAttachment(data)
+                resolve({
+                    errCode: 0,
+                    errMessage: "OKK",
+                })
+                //send remedy
+            }
+        } catch (error) {
+            reject(error)
+        }
+    })
+}
 
 module.exports = {
     getTopDoctorHome: getTopDoctorHome,
@@ -404,6 +440,6 @@ module.exports = {
     getExtraInfoById: getExtraInfoById,
     getProfileById: getProfileById,
     checkRequiredField: checkRequiredField,
-    getListPatient
+    getListPatient, sendRemedy
 
 }

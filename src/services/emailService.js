@@ -23,6 +23,34 @@ let sendAEmail = async (data) => {
     });
 
 }
+let sendAttachment = async (data) => {
+    const transporter = nodemailer.createTransport({
+        host: "smtp.gmail.com",
+        port: 465,
+        secure: true,
+        auth: {
+            // TODO: replace `user` and `pass` values from <https://forwardemail.net>
+            user: process.env.EMAIL_APP,
+            pass: process.env.EMAIL_APP_PASSWORD,
+        },
+    });
+
+    // send mail with defined transport object
+    const info = await transporter.sendMail({
+        from: '"Hỏi dân Chym to" <normanlovehislife@gmail.com>', // sender address
+        to: data.email, // list of receivers
+        subject: "Thông tin đặt gay pỏn 3.0", // Subject line
+        html: getBodyHTMLRemedy(data),
+        attachments: [
+            {
+                filename: `remedy-${data.patientId}-${data.patientName}-${new Date().getTime()}.png`,
+                content: data.imgBase64.split('base64,')[1],
+                encoding: 'base64'
+            }
+        ],
+        // html body
+    });
+}
 
 let getBodyHTML = (data) => {
     let result = ''
@@ -56,8 +84,39 @@ let getBodyHTML = (data) => {
     }
     return result
 }
+let getBodyHTMLRemedy = (data) => {
+    let result = ''
+    if (data.language === 'vi') {
+        result =
+            `<h3>Xin chào ${data.patientName}!</h3>
+<p>Bạn nhận được email này thì test ngon r</p>
+<p>Thông tin đơn thuốc/hóa đơn bcs</p>
+
+
+<p>test click link xác nhận</p>
+
+
+<div><a href=${data.link} target="_blank">Bấm zô đây</a></div>
+
+`
+    }
+    if (data.language === 'en') {
+        result =
+            `<h3>Dear ${data.patientName}!</h3>
+        <p>Hope u got this shit</p>
+        <p>intro blah blah blah r</p>
+        
+        <p>test click link <3></p>
+        
+        
+        <div><a href=${data.link} target="_blank">SUCK HERE</a></div>
+        
+        `
+    }
+    return result
+}
 
 
 module.exports = {
-    sendAEmail, getBodyHTML
+    sendAEmail, getBodyHTML, sendAttachment
 }
